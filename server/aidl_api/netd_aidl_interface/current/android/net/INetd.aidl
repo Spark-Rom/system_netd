@@ -147,6 +147,7 @@ interface INetd {
   void networkCreate(in android.net.NativeNetworkConfig config);
   void networkAddUidRangesParcel(in android.net.netd.aidl.NativeUidRangeConfig uidRangesConfig);
   void networkRemoveUidRangesParcel(in android.net.netd.aidl.NativeUidRangeConfig uidRangesConfig);
+  void firewallSetMACAddressRule(in @utf8InCpp String macAddr, int firewallRule);
   const int IPV4 = 4;
   const int IPV6 = 6;
   const int CONF = 1;

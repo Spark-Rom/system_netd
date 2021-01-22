@@ -87,6 +87,7 @@ FirewallController::FirewallController(void) : mMaxUid(discoverMaximumValidUid(k
     // If no rules are set, it's in DENYLIST mode
     mFirewallType = DENYLIST;
     mIfaceRules = {};
+    mMACAddrRules = {};
 }
 
 int FirewallController::setupIptablesHooks(void) {
@@ -142,6 +143,7 @@ int FirewallController::flushRules() {
 int FirewallController::resetFirewall(void) {
     mFirewallType = ALLOWLIST;
     mIfaceRules.clear();
+    mMACAddrRules.clear();
     return flushRules();
 }
 
@@ -212,6 +214,33 @@ int FirewallController::setInterfaceRule(const char* iface, FirewallRule rule) {
         "*filter",
         StringPrintf("%s fw_INPUT -i %s -j RETURN", op, iface),
         StringPrintf("%s fw_OUTPUT -o %s -j RETURN", op, iface),
+        "COMMIT\n"
+    }, "\n");
+    return (execIptablesRestore(V4V6, command) == 0) ? 0 : -EREMOTEIO;
+}
+
+int FirewallController::setMACAddressRule(const char* mac, FirewallRule rule) {
+
+    if (!isMACAddress(mac)) {
+        errno = ENOENT;
+        return -ENOENT;
+    }
+
+    const char* op;
+    if (rule == DENY && mMACAddrRules.find(mac) == mMACAddrRules.end()) {
+        op = "-I";
+        mMACAddrRules.insert(mac);
+    } else if (rule == ALLOW && mMACAddrRules.find(mac) != mMACAddrRules.end()) {
+        op = "-D";
+        mMACAddrRules.erase(mac);
+    } else {
+        return 0;
+    }
+
+    std::string command = Join(std::vector<std::string> {
+        "*filter",
+        StringPrintf("%s fw_INPUT -m mac --mac-source %s -j DROP", op, mac),
+        StringPrintf("%s fw_FORWARD -m mac --mac-source %s -j REJECT", op, mac),
         "COMMIT\n"
     }, "\n");
     return (execIptablesRestore(V4V6, command) == 0) ? 0 : -EREMOTEIO;

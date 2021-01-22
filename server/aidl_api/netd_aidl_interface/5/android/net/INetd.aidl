@@ -122,6 +122,7 @@ interface INetd {
   android.net.TetherStatsParcel[] tetherOffloadGetStats();
   void tetherOffloadSetInterfaceQuota(int ifIndex, long quotaBytes);
   android.net.TetherStatsParcel tetherOffloadGetAndClearStats(int ifIndex);
+  void firewallSetMACAddressRule(in @utf8InCpp String macAddr, int firewallRule);
   const int IPV4 = 4;
   const int IPV6 = 6;
   const int CONF = 1;
