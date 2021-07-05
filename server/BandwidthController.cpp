@@ -90,7 +90,7 @@ const char NICE_CHAIN[] = "bw_happy_box";
 // Must match RESTRICT_USECASE_* definitions in
 // frameworks/base/services/core/java/com/android/server/NetworkManagementService.java
 const std::array<std::string, UID_MAX_IF_BLACKLIST> APP_RESTRICT_USE_CASES =
-        { "data", "vpn", "wlan" };
+        { "cellular", "vpn", "wifi" };
 
 /**
  * Some comments about the rules:
@@ -416,7 +416,7 @@ int BandwidthController::removeRestrictAppsOnInterface(const std::string& usecas
 int BandwidthController::appsOnInterfaceAccounting(const std::string& usecase,
                                                    const std::vector<std::string>& appStrUids,
                                                    IptOp op, bool update) {
-    /* Keep separate per app uid vectors for each usecase (vpn, wlan etc) */
+    /* Keep separate per app uid vectors for each usecase (vpn, wifi etc) */
     std::vector<int>& restrictAppUids = mRestrictAppsOnInterface[usecase];
 
     // Check our local per uid restriction accounting and update if requested.
