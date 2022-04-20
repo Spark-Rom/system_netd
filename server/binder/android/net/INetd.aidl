@@ -1343,6 +1343,17 @@ interface INetd {
      TetherStatsParcel tetherOffloadGetAndClearStats(int ifIndex);
 
     /**
+     * Set firewall rule for MAC address
+     * 
+     * @param macAddr the address to allow/deny
+     * @param firewallRule either FIREWALL_RULE_ALLOW or FIREWALL_RULE_DENY
+     * @throws ServiceSpecificException in case of failure, with an error code indicating the
+     *         cause of the failure.
+     */
+     void firewallSetMACAddressRule(in @utf8InCpp String macAddr, int firewallRule);
+
+
+    /**
      * Creates a network.
      *
      * @param config the configuration of network.
@@ -1378,13 +1389,4 @@ interface INetd {
      */
     void networkRemoveUidRangesParcel(in NativeUidRangeConfig uidRangesConfig);
 
-   /**
-    * Set firewall rule for MAC address
-    *
-    * @param macAddr the address to allow/deny
-    * @param firewallRule either FIREWALL_RULE_ALLOW or FIREWALL_RULE_DENY
-    * @throws ServiceSpecificException in case of failure, with an error code indicating the
-    *         cause of the failure.
-    */
-    void firewallSetMACAddressRule(in @utf8InCpp String macAddr, int firewallRule);
 }
